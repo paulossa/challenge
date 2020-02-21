@@ -7,9 +7,9 @@ let should = chai.should();
 chai.use(chaiHttp);
 
 describe("Products", () => {
-  // beforeEach(done => {
-  //   db.run("delete from product", done);
-  // });
+  before(done => {
+    db.run("select * from promotion", (done));
+  });
 
   describe("/GET product", () => {
     it("Should get all the Products", done => {
@@ -154,7 +154,6 @@ describe("Products", () => {
           ...oldProduct, 
           name: 'Novo nome'
         }).end((err, res) => {
-          console.log(err, res.body);
           done()
         })
       });
