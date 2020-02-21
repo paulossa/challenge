@@ -1,3 +1,6 @@
+@import '../../global/_colors.less';
+
+
 .product { 
     margin: 1.6rem 20rem;
     
@@ -12,12 +15,24 @@
         display: grid;
         grid-auto-flow: column;
 
-        grid-template-columns: 60% 20% 20%;
+        grid-template-columns: 50% 20% 20% 10%;
         justify-content: space-between;
         align-items: center;
         margin: 1rem auto;
         &__select { 
             width: 8rem;
+        }
+
+        &__links {
+            display: grid;
+            grid-auto-flow: column;
+
+            &--delete {
+                color: @lust;
+            }
+            &--edit {
+                color: @bleuDeFrance;
+            }
         }
     }
 
