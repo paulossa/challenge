@@ -1,6 +1,6 @@
 import alt from "../../alt";
 
-import ProductActions from './ProductActions';
+import ProductActions from "./ProductActions";
 class ProductStore {
   constructor() {
     this.products = [];
@@ -8,7 +8,8 @@ class ProductStore {
   }
 
   getProducts(products) {
-    this.products = products;
+    const normalizeCurrency = p => ({ ...p, value: p.value / 100 });
+    this.products = products.map(normalizeCurrency);
   }
 }
 

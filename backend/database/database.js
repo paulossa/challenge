@@ -18,7 +18,7 @@ const createPromotions = (db, callback) => {
         db.run(insert, ["pague1leve2", "Pague 1 e leve 2"], () => {
           // Only creates products after creating promotions,
           // gotta hate this async style
-          db.run(insert, ["3por10", "Compre 3 e pague 10 reais"], callback());
+          db.run(insert, ["3por10", "Compre 3 e pague 10 reais"], callback(db));
         });
       } else {
         // when running tests will only create the products table
@@ -29,7 +29,6 @@ const createPromotions = (db, callback) => {
 };
 
 const createProducts = db => () => {
-  console.log('creating product')
   db.run(schemas.product_schema, err => {
     if (err) {
       // Tabela já existe
@@ -46,20 +45,20 @@ const createProducts = db => () => {
           null
         ]);
 
-        db.all("select * from promotion", (err, data) => {
+        db.all("select * from promotion", (err, promotions) => {
           db.run(insert, [
             "Pão de Alho P/ Churrasco",
             "p021",
             "Pao de Alho para Churrasco SALDIA",
             2000,
-            data[0].id
+            promotions[0].id
           ]);
           db.run(insert, [
             "Dose de glicose",
             "p015",
             "Glicose para aplicar nos amigos que beberam demais",
             5000,
-            data[1].id
+            promotions[1].id
           ]);
         });
       }
@@ -68,7 +67,6 @@ const createProducts = db => () => {
 };
 
 let db = new sqlite3.Database(DBSOURCE, err => {
-  const { NODE_ENV } = process.env;
   if (err) {
     // Cannot open database
     console.error("Could not connect to the database");

@@ -2,14 +2,16 @@ import React, { Component } from "react";
 import connectToStores from "alt-utils/lib/connectToStores";
 
 import SearchIcon from '@material-ui/icons/SearchRounded';
-import Typography from "@material-ui/core/Typography";
-
-
-
+import Typography from "@material-ui/core/Typography";        
 
 import ProductActions from "./ProductActions";
 import ProductStore from "./ProductStore";
 import { Paper, FormControl, InputLabel, OutlinedInput, Divider, Select, MenuItem } from "@material-ui/core";
+
+import PromotionActions from "../promotion/PromotionActions";
+import PromotionStore from "../promotion/PromotionStore";
+
+import { formatCurrency } from '../../global/utils'
 
 import './Product.css';
 
@@ -22,17 +24,29 @@ class Product extends Component {
   inputLabel = React.createRef();
 
   static getPropsFromStores() {
-    return ProductStore.getState();
+    return {...ProductStore.getState(), ...PromotionStore.getState()};
   }
 
   static getStores() {
-    return [ProductStore];
+    return [ProductStore, PromotionStore];
   }
 
   componentDidMount() {
     this.getProducts();
+    this.getPromotions();
   }
 
+  getPromotions = async () => {
+    this.setState({ loading: true })
+    try {
+      await PromotionActions.getPromotions();
+    } catch (err) {
+      alert('Houve um erro ao buscar as promoções')
+    }
+
+
+    this.setState({loading: false})
+  }
   getProducts = async () => {
     this.setState({ loading: true });
     try {
@@ -49,9 +63,9 @@ class Product extends Component {
     this.setState({ loading: false });
   };
 
-  addPromotionToProduct = (idx, productId) => evt => {
-    // TODO change props.products, add id_promotion inside it. set flag edited = true? 
-  }
+  renderPromotionItems = (productId) => this.props.promotions.map(promotion => {
+    return <MenuItem value={promotion.id} key={`${productId}_${promotion.id}`}>{promotion.type}</MenuItem> 
+  })
 
   renderProduct = (product, idx) => {
     return (
@@ -61,24 +75,22 @@ class Product extends Component {
           <Typography variant="subtitle1">{product.description}</Typography>
         </section>
         <section>
-          <FormControl >
-              <InputLabel id="product__item__select">
+          <FormControl className="product__item__select" >
+              <InputLabel >
                 Promoção
               </InputLabel>
               <Select 
-                value={product.id_promotion} 
-                onChange={this.addPromotionToProduct(idx, product.id)}
-                id="product__item__select"
+                value={product.id_promotion || ''} 
                 className="product__item__select"
+                inputProps={{readOnly: true}}
               >
-                <MenuItem value={null}><em>Nenhuma</em></MenuItem>
-                <MenuItem value="pague1leve2">pague1leve2</MenuItem>
-                <MenuItem value="3por10">3por10</MenuItem>
+                <MenuItem value={''}><em>Nenhuma</em></MenuItem>
+                {this.renderPromotionItems(product.id)}
               </Select>
           </FormControl>
         </section>
         <section>
-          <Typography variant="h4">{product.value}</Typography>
+          <Typography variant="h5">{formatCurrency(product.value)}</Typography>
         </section>
         <section>
           { product.edited ? 'butoes de salvar' : null}
@@ -89,15 +101,15 @@ class Product extends Component {
 
   renderProducts = () => {
     const { products } = this.props;
+    const products_exist = products.length > 0;
 
     return (
       <section className="products__container">
         {
-          products.length === 0 ? (
+          !products_exist ? (
             <Typography variant="h5" className="centered">Nenhum produto para mostrar</Typography>
-          ) : (
-              products.map(this.renderProduct)
-            )}
+          ) : (products.map(this.renderProduct))
+        }
       </section>
     );
   };
