@@ -1,0 +1,50 @@
+@import './global/_colors.less';
+
+.app {
+    &_nav {
+        background-color: @lust !important;
+        &_links {
+            display: grid;
+            grid-auto-flow: column;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        a {
+            color: @white;
+            text-decoration: none;
+            text-transform: uppercase;
+            margin: 0 2rem;
+            transition: color .4s;
+            font-weight: 500;
+            &:hover {
+                color: fade(yellow, 90%);
+            }
+        }
+    }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  height: 100vh;
+  background-color: #f4f0ec;
+}
+.app,
+#root {
+  height: 100vh;
+}
+
+.content-container {
+    margin: 1.6rem auto; 
+    width: 80%;
+    max-width: 64rem;
+}
+
+.centered {
+    margin: auto;
+    text-align: center;
+}
