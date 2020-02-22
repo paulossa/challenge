@@ -1,12 +1,18 @@
 import React, { PureComponent } from "react";
 import connectToStores from "alt-utils/lib/connectToStores";
 import { AppBar, Toolbar } from "@material-ui/core";
-import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Link,
+  Redirect
+} from "react-router-dom";
 
 import ROUTES_CONFIG from "./RoutesConfig";
 
 import Product from "./views/product/Product";
-import UpsertProduct from './components/upsertProduct/UpsertProduct';
+import UpsertProduct from "./components/upsertProduct/UpsertProduct";
 
 import "./App.css";
 
@@ -42,7 +48,11 @@ class App extends PureComponent {
               render={props => <h4>TODO</h4>}
             />
             <Route exact path={ROUTES_CONFIG.products()} component={Product} />
-            <Route exact path={ROUTES_CONFIG.productsEdit()} component={UpsertProduct} />
+            <Route
+              exact
+              path={ROUTES_CONFIG.productsEdit()}
+              component={UpsertProduct}
+            />
             <Route
               path={`${ROUTES_CONFIG.sales_promotion()}*`}
               render={() => " 404 Not found"}
@@ -50,8 +60,9 @@ class App extends PureComponent {
 
             <Route
               render={() => {
-                return <Redirect to={ROUTES_CONFIG.store()} />
-              }}/>
+                return <Redirect to={ROUTES_CONFIG.store()} />;
+              }}
+            />
           </Switch>
         </Router>
       </div>

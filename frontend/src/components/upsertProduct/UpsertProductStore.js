@@ -10,7 +10,6 @@ class UpsertProductStore {
   }
 
   getProduct(product) {
-    console.log('changin product ')
     this.product = product;
   }
 

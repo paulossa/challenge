@@ -63,11 +63,8 @@ export class UpsertProduct extends Component {
 
     try {
       if (id) {
-        console.log('ageat proa')
-        
         await UpsertProductActions.getProduct(id);
-        console.log(this.state.product)
-        this.setState({...this.props.product})
+        this.setState({ ...this.props.product });
       }
     } catch (error) {
       this.props.history.push(RoutesConfig.products());

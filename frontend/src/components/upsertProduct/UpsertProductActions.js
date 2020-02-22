@@ -6,9 +6,7 @@ class UpsertProductActions {
     return async dispatch => {
       try {
         const { data } = await api.get("/produto");
-        console.log('on server')
         const product = data.find(el => el.id === +productId);
-        console.log('found ', product)
         dispatch(product);
       } catch (error) {
         throw error;

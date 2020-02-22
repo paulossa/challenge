@@ -51,7 +51,7 @@ class Product extends Component {
   }
 
   componentWillUnmount() {
-    alt.recycle(ProductStore, PromotionStore)
+    alt.recycle(ProductStore, PromotionStore);
   }
 
   getPromotions = async () => {
@@ -117,7 +117,10 @@ class Product extends Component {
     return (
       <Paper className="product__item" key={`pr_${idx}`}>
         <section>
-          <Typography variant="title"><code title="Código do produto">{product.code} | </code>{product.name}</Typography>
+          <Typography variant="title">
+            <code title="Código do produto">{product.code} | </code>
+            {product.name}
+          </Typography>
           <Typography variant="subtitle1">{product.description}</Typography>
         </section>
         <section>
