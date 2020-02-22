@@ -12,10 +12,11 @@ import {
 import ROUTES_CONFIG from "./RoutesConfig";
 
 import Product from "./views/product/Product";
-import StoreView from './views/store/Store';
+import StoreView from "./views/store/Store";
 import UpsertProduct from "./components/upsertProduct/UpsertProduct";
 
 import "./App.css";
+import Promotion from "./views/promotion/Promotion";
 
 class App extends PureComponent {
   static getStores() {
@@ -43,11 +44,7 @@ class App extends PureComponent {
           </AppBar>
 
           <Switch>
-            <Route
-              exact
-              path={ROUTES_CONFIG.store()}
-              component={StoreView}
-            />
+            <Route exact path={ROUTES_CONFIG.store()} component={StoreView} />
             <Route exact path={ROUTES_CONFIG.products()} component={Product} />
             <Route
               exact
@@ -55,8 +52,8 @@ class App extends PureComponent {
               component={UpsertProduct}
             />
             <Route
-              path={`${ROUTES_CONFIG.sales_promotion()}*`}
-              render={() => " 404 Not found"}
+              path={`${ROUTES_CONFIG.sales_promotion()}`}
+              component={Promotion}
             />
 
             <Route

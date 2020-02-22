@@ -1,70 +1,91 @@
-const db = require("../database/database");
-var constants = require('../database/constants');
+function calculate_prices(products, promotions, cart) {
+  let product, promotion;
+  let output = [];
 
-function calculate_value_product(product, quantity, promotion) {
-  if (promotion) {
-    switch (promotion.type) {
-      case "2":
-        break;
+  for (let cart_item of cart) {
+    product = products.find(product => product.id === cart_item.id_product);
+    promotion = product.id_promotion
+      ? promotions.find(p => p.id === product.id_promotion)
+      : null;
 
-      default:
-        break;
+    if (!promotion) {
+      output.push({
+        code: product.code,
+        name: product.name,
+        value: product.value * cart_item.quantity,
+        quantity: cart_item.quantity,
+        promotion: null
+      });
+    } else {
+      switch (promotion.type) {
+        case "pague1leve2":
+          let items_in_prom = Math.floor(cart_item.quantity / 2);
+          let items_not_in_prom = cart_item.quantity % 2;
+
+          if (items_in_prom) {
+            output = [
+              ...output,
+              {
+                code: product.code,
+                name: product.name,
+                value: product.value * items_in_prom,
+                quantity: cart_item.quantity - items_not_in_prom,
+                promotion: promotion.type
+              }
+            ];
+          }
+
+          if (items_not_in_prom) {
+            output = [
+              ...output,
+              {
+                code: product.code,
+                name: product.name,
+                value: product.value * items_not_in_prom,
+                quantity: items_not_in_prom,
+                promotion: null
+              }
+            ];
+          }
+          break;
+        case "3por10":
+          let promotion_group = Math.floor(cart_item.quantity / 3);
+          let qty_not_prom = cart_item.quantity % 3;
+
+          if (promotion_group) {
+            output = [
+              ...output,
+              {
+                code: product.code,
+                name: product.name,
+                value: promotion_group * 1000,
+                quantity: cart_item.quantity - qty_not_prom,
+                promotion: promotion.type
+              }
+            ];
+          }
+          if (qty_not_prom) {
+            output = [
+              ...output,
+              {
+                code: product.code,
+                name: product.name,
+                value: qty_not_prom * product.value,
+                quantity: qty_not_prom,
+                promotion: null
+              }
+            ];
+          }
+          break;
+        default:
+          break;
+      }
     }
   }
-  // Default case 
-  return [[{product: product, quantity: quantity}], product.value * quantity];
+
+  return output;
 }
 
 module.exports = {
-  calculate: async (cart_items = [], callback=()=>{}) => { 
-    const products_ids = cart_items.map(item => item.id_product);
-    const sql_get_products = `select * from product where id in (${products_ids.join(', ')})`;
-    db.all(sql_get_products, [], (err, data) => {
-      callback(data);
-    })
-
-
-  },
-  calcultate_prices: console.log,
-  calculate2: async (cart_items = []) => {
-
-
-
-
-
-
-
-    let output = { products: [], total: 0 };
-    const sql_get_product = `select * from product where id = ?`;
-    const sql_get_promotion = 'select * from promotion where id = ?';
-
-    db.open(constants.DB_PATH);
-
-    console.log(await db.all(sql_get_product, [cart_item.id_product]));
-
-    for (let cart_item of cart_items) {
-      db.all(sql_get_product, [cart_item.id_product], (err, product) => {
-        
-        db.all(sql_get_promotion, [product.id_promotion], (err, promotion) => {
-          promotion = promotion.length == 1 ? promotion[0] : {};
-          let [charged_products, total] = calculate_value_product(
-            product[0],
-            cart_item.quantity,
-            promotion
-          );
-          console.log('should alter products',  calculate_value_product(
-            product[0],
-            cart_item.quantity,
-            promotion
-          ), charged_products, total)
-          output.products = [...output.products, charged_products];
-          output.total += total;
-        })
-      });
-    }
-
-    console.log('after for')
-
-    return output;
-  },
+  calculate_prices
 };

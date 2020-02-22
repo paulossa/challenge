@@ -10,6 +10,7 @@ class StoreStore {
   constructor() {
     this.products = [];
     this.bankslip = [];
+    this.promotions = {};
     this.bindActions(StoreActions);
   }
 
@@ -19,6 +20,14 @@ class StoreStore {
 
   checkout(bankslip) {
     this.bankslip = bankslip.map(normalizeValue);
+  }
+
+  getPromotions(promotions) {
+    let temp_prom = {};
+    for (const promotion of promotions) {
+      temp_prom[promotion.id] = `${promotion.type} - ${promotion.description}`;
+    }
+    this.promotions = temp_prom;
   }
 
   removeFromProducts(product) {

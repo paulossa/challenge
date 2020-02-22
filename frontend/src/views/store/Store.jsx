@@ -10,9 +10,11 @@ import {
   Paper,
   IconButton,
   Input,
-  Button
+  Button,
+  Tooltip
 } from "@material-ui/core";
 
+import InfoIcon from "@material-ui/icons/InfoRounded";
 import ReceiptIcon from "@material-ui/icons/ReceiptRounded";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCartRounded";
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCartRounded";
@@ -40,6 +42,7 @@ class StoreView extends Component {
   componentDidMount() {
     this.checkout();
     this.getProducts();
+    this.getPromotions();
   }
 
   componentWillUnmount() {
@@ -56,14 +59,23 @@ class StoreView extends Component {
     this.setState({ loading: false });
   };
 
+  getPromotions = async () => {
+    try {
+      await StoreActions.getPromotions();
+    } catch (error) {
+      alert("Ocorreu um erro ao buscar as promoções");
+    }
+  };
+
   checkout = async () => {
     const { cart, quantities } = this.state;
     // let payload = [{ id_product: 2, quantity: 3 }];
     let payload = [];
     for (const item of cart) {
+      const qty = quantities[item.id];
       payload.push({
         id_product: item.id,
-        quantity: quantities[item.id]
+        quantity: Math.max(qty, -qty)
       });
     }
     await StoreActions.checkout(payload);
@@ -111,64 +123,87 @@ class StoreView extends Component {
   };
 
   renderProducts = () => {
-    const { products } = this.props;
-    return products.map(({ id: productId, name, description, value }) => {
-      return (
-        <Paper className="store__product" key={`p_${productId}`}>
-          <section className="product-info">
-            <section>
-              <Typography variant="title">{name}</Typography>
-              <Typography variant="body1">{description}</Typography>
+    const { products, promotions } = this.props;
+    return products.map(
+      ({ id: productId, name, description, value, id_promotion }) => {
+        return (
+          <Paper className="store__product" key={`p_${productId}`}>
+            <section className="product-info">
+              <section>
+                {id_promotion && (
+                  <Tooltip
+                    title={promotions[id_promotion]}
+                    placement="top"
+                    arrow
+                  >
+                    <InfoIcon className="store__icon--info" />
+                  </Tooltip>
+                )}
+                <Typography variant="title">{name}</Typography>
+                <Typography variant="body1">{description}</Typography>
+              </section>
             </section>
-          </section>
-          <section>{formatCurrency(value)}</section>
-          <section>
-            <Input
-              type="number"
-              inputProps={{ min: "1" }}
-              placeholder="Qtde"
-              className="store__product__input"
-              name="quantity"
-              onChange={this.handleQuantityChange(productId)}
-            />
-            <IconButton onClick={this.handleAddToCart(productId)}>
-              <AddShoppingCartIcon />
-            </IconButton>
-          </section>
-        </Paper>
-      );
-    });
+            <section>{formatCurrency(value)}</section>
+            <section>
+              <Input
+                type="number"
+                inputProps={{ min: "1" }}
+                placeholder="Qtde"
+                className="store__product__input"
+                name="quantity"
+                onChange={this.handleQuantityChange(productId)}
+              />
+              <IconButton onClick={this.handleAddToCart(productId)}>
+                <AddShoppingCartIcon />
+              </IconButton>
+            </section>
+          </Paper>
+        );
+      }
+    );
   };
 
   renderCart = () => {
+    const { promotions } = this.props;
     const { quantities, cart } = this.state;
 
-    return cart.map(({ id: productId, name, description, value }) => {
-      return (
-        <Paper className="store__product" key={`cp_${productId}`}>
-          <section className="product-info">
-            <section>
-              <Typography variant="title">{name}</Typography>
-              <Typography variant="body1">{description}</Typography>
+    return cart.map(
+      ({ id: productId, name, description, value, id_promotion }) => {
+        return (
+          <Paper className="store__product" key={`cp_${productId}`}>
+            <section className="product-info">
+              <section>
+                {id_promotion && (
+                  <Tooltip
+                    title={promotions[id_promotion]}
+                    placement="top"
+                    arrow
+                  >
+                    <InfoIcon className="store__icon--info" />
+                  </Tooltip>
+                )}
+                <Typography variant="title">{name}</Typography>
+                <Typography variant="body1">{description}</Typography>
+              </section>
             </section>
-          </section>
-          <section>{formatCurrency(value)}</section>
-          <section>
-            <Input
-              type="number"
-              inputProps={{ min: "1" }}
-              value={quantities[productId]}
-              placeholder="Qtde"
-              className="store__product__input"
-              onChange={this.handleQuantityChange(productId)}
-            />
-            <IconButton onClick={this.handleRemoveFromCart(productId)}>
-              <RemoveShoppingCartIcon />
-            </IconButton>
-          </section>
-        </Paper>
-      );
-    });
+            <section>{formatCurrency(value)}</section>
+            <section>
+              <Input
+                type="number"
+                inputProps={{ min: "1" }}
+                value={quantities[productId]}
+                placeholder="Qtde"
+                className="store__product__input"
+                onChange={this.handleQuantityChange(productId)}
+              />
+              <IconButton onClick={this.handleRemoveFromCart(productId)}>
+                <RemoveShoppingCartIcon />
+              </IconButton>
+            </section>
+          </Paper>
+        );
+      }
+    );
   };
 
   renderBankslip = () => {

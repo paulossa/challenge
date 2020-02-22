@@ -38,18 +38,20 @@ const createProducts = db => () => {
         var insert =
           "INSERT INTO product (name, code, description, value, id_promotion) VALUES (?,?,?,?,?)";
         db.run(insert, [
-          "Cerveja S/ Alcool",
+          "Cerveja",
           "b001",
-          "Cerveja Sem Álcool, pra você beber muito e não passar mal SKAL",
+          "Cerveja Sem Álcool, pra você beber muito e não passar mal - SKAL",
           1000,
           null
         ]);
 
+        db.run(insert, ["Coca-Cola", "b002", "Beba Com Moderação", 850, null]);
+
         db.all("select * from promotion", (err, promotions) => {
           db.run(insert, [
-            "Pão de Alho P/ Churrasco",
+            "Pão de Alho",
             "p021",
-            "Pao de Alho para Churrasco SALDIA",
+            "Pao de Alho para Churrasco - SALDIA",
             2000,
             promotions[0].id
           ]);
