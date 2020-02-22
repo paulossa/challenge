@@ -2,14 +2,7 @@ import React, { Component } from "react";
 import connectToStores from "alt-utils/lib/connectToStores";
 import PromotionStore from "./PromotionStore";
 
-import {
-  Typography,
-  Divider,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  Paper
-} from "@material-ui/core";
+import { Typography, Divider, Paper } from "@material-ui/core";
 import PromotionActions from "./PromotionActions";
 
 import "./Promotion.css";
