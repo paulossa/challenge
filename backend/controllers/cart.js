@@ -12,18 +12,11 @@ function calculate_prices(products, promotions, cart) {
   let product, promotion;
   let output = [];
 
-  console.log('--------------')
-
-  console.log(promotions)
-
-  console.log('------------------')
   for (let cart_item of cart) {
     product = products.find(product => product.id === cart_item.id_product);
     promotion = product.id_promotion
       ? promotions.find(p => (p.id = product.id_promotion))
       : null;
-
-    console.log('PROMOTION \n\n\n', promotion, cart_item);
 
     if (!promotion) {
       output.push({
@@ -100,7 +93,7 @@ function calculate_prices(products, promotions, cart) {
 
 router.post("/", async (req, res) => {
   `
-    req.body deve ser um array de produtos (KISS) '
+    req.body deve ser um array de produtos (KISS)
     [
       {product_id , quantity}
     ]

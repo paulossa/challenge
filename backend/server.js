@@ -9,7 +9,10 @@ app.use(bodyParser.json());
 
 // Allow CORS
 app.use((req, res, next) => {
+  // BE PERMISSIVE 
   res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', '*');
+  res.header('Access-Control-Allow-Headers', '*');
   next();
 });
 

@@ -11,6 +11,10 @@ class ProductStore {
     const normalizeCurrency = p => ({ ...p, value: p.value / 100 });
     this.products = products.map(normalizeCurrency);
   }
+
+  deleteProduct(productId) {
+    this.products = this.products.filter(prod => prod.id !== productId)
+  }
 }
 
 export default alt.createStore(ProductStore, "ProductStore");

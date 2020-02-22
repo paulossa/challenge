@@ -3,7 +3,9 @@ var db = require("../database/database");
 const validate_product = (product = { name: "" }) => {
   // product should have at least name and price
   let errors = {};
-  if (!product.name.trim()) {
+  if (!product.name || 
+    
+    !product.name.trim()) {
     errors.name = "Nome não pode ser vazio";
   }
 
@@ -20,6 +22,10 @@ const validate_product = (product = { name: "" }) => {
 
 const validate_product_schema = (req, res, next) => {
   const errors = validate_product(req.body);
+
+  if ('id_promotion' in req.body && !req.body.id_promotion) {
+    delete req.body.id_promotion
+  }
 
   if (Object.keys(errors).length === 0) {
     next();
