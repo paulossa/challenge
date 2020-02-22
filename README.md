@@ -1,10 +1,11 @@
-re### Coding Challenge
+### Coding Challenge
 
 Sistema pra um e-commerce que deve contemplar:
 
 - [x] CRUD de produtos
 - [x] Carrinho de compras em que seja possível ver as promoções aplicadas.
-- [-] CRUD de promoções
+- [x] R de promoções
+- [ ] CUD de promoções
 
 ---
 
