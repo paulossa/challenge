@@ -12,6 +12,7 @@ import {
 import ROUTES_CONFIG from "./RoutesConfig";
 
 import Product from "./views/product/Product";
+import StoreView from './views/store/Store';
 import UpsertProduct from "./components/upsertProduct/UpsertProduct";
 
 import "./App.css";
@@ -45,7 +46,7 @@ class App extends PureComponent {
             <Route
               exact
               path={ROUTES_CONFIG.store()}
-              render={props => <h4>TODO</h4>}
+              component={StoreView}
             />
             <Route exact path={ROUTES_CONFIG.products()} component={Product} />
             <Route
