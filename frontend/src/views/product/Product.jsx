@@ -26,6 +26,8 @@ import PromotionStore from "../promotion/PromotionStore";
 import { formatCurrency } from "../../global/utils";
 
 import "./Product.css";
+import RoutesConfig from "../../RoutesConfig";
+import alt from "../../alt";
 
 class Product extends Component {
   state = {
@@ -46,6 +48,10 @@ class Product extends Component {
   componentDidMount() {
     this.getProducts();
     this.getPromotions();
+  }
+
+  componentWillUnmount() {
+    alt.recycle(ProductStore, PromotionStore)
   }
 
   getPromotions = async () => {
@@ -75,24 +81,28 @@ class Product extends Component {
     this.setState({ loading: false });
   };
 
-  handleDeleteButton = (productId) => async () => {
-    this.setState({loading: true})
-    let usr_answer = window.confirm('Deseja realmente deletar esse produto?')
+  goTo = productId => () => {
+    this.props.history.push(RoutesConfig.productsEdit(productId));
+  };
+
+  handleDeleteButton = productId => async () => {
+    this.setState({ loading: true });
+    let usr_answer = window.confirm("Deseja realmente deletar esse produto?");
     try {
       if (usr_answer) {
-        await ProductActions.deleteProduct(productId)
+        await ProductActions.deleteProduct(productId);
       }
     } catch (error) {
-      let msg = "Houve um erro ao deletar o produto"; 
+      let msg = "Houve um erro ao deletar o produto";
 
       if (error.response && error.response.data.message) {
         msg = error.response.data.message;
       }
-      
-      alert(msg)
+
+      alert(msg);
     }
-    this.setState({loading: false})
-  }
+    this.setState({ loading: false });
+  };
 
   renderPromotionItems = productId =>
     this.props.promotions.map(promotion => {
@@ -107,7 +117,7 @@ class Product extends Component {
     return (
       <Paper className="product__item" key={`pr_${idx}`}>
         <section>
-          <Typography variant="title">{product.name}</Typography>
+          <Typography variant="title"><code title="Código do produto">{product.code} | </code>{product.name}</Typography>
           <Typography variant="subtitle1">{product.description}</Typography>
         </section>
         <section>
@@ -129,10 +139,13 @@ class Product extends Component {
           <Typography variant="h5">{formatCurrency(product.value)}</Typography>
         </section>
         <section className="product__item__links">
-          <IconButton title="Editar">
+          <IconButton title="Editar" onClick={this.goTo(product.id)}>
             <EditIcon className="product__item__links--edit" />
           </IconButton>
-          <IconButton title="Deletar" onClick={this.handleDeleteButton(product.id)}>
+          <IconButton
+            title="Deletar"
+            onClick={this.handleDeleteButton(product.id)}
+          >
             <DeleteIcon className="product__item__links--delete" />
           </IconButton>
         </section>
@@ -142,7 +155,14 @@ class Product extends Component {
 
   renderProducts = () => {
     const { products } = this.props;
-    const products_exist = products.length > 0;
+    const { query } = this.state;
+
+    const query_lower = query.toLocaleLowerCase();
+    const queryFilter = ({ name, code }) =>
+      name.toLowerCase().includes(query_lower) ||
+      code.toLowerCase().includes(query_lower);
+    const filteredProducts = products.filter(queryFilter);
+    const products_exist = filteredProducts.length > 0;
 
     return (
       <section className="products__container">
@@ -151,14 +171,13 @@ class Product extends Component {
             Nenhum produto para mostrar
           </Typography>
         ) : (
-          products.map(this.renderProduct)
+          filteredProducts.map(this.renderProduct)
         )}
       </section>
     );
   };
 
-  handleChange = evt => evt =>
-    this.setState({ [evt.target.name]: evt.target.value });
+  handleChange = evt => this.setState({ [evt.target.name]: evt.target.value });
 
   render() {
     return (
