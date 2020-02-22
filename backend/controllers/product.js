@@ -24,12 +24,12 @@ router.put("/:productId", validate_product_schema, (req, res) => {
                 name = COALESCE(?, name),
                 code = COALESCE(?, code),
                 description = COALESCE(?, description),
-                value = COALESCE(?, value)
+                value = COALESCE(?, value),
+                id_promotion = ?
               where id = ?`;
-  const { name, code, description, value } = req.body;
-  const params = [name, code, description, value, req.params.productId];
+  const { name, code, description, value, id_promotion } = req.body;
+  const params = [name, code, description, value, id_promotion, req.params.productId];
   db.run(sql, params, (err, data) => {
-    console.log('res err', data, err)
     if (err) {
       res.status(400).json({ error: err.message });
       return;
@@ -39,7 +39,6 @@ router.put("/:productId", validate_product_schema, (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  console.log(req.body)
   const errors = validators.validate_product(req.body)
   if (Object.keys(errors).length == 0) {
     var sql = 'INSERT INTO product (code, name, description, value, id_promotion) VALUES (?,?,?,?,?)'
