@@ -1,0 +1,62 @@
+@import "../../global/_colors.less";
+
+.store {
+  margin: 1.6rem 3.2rem;
+  .items_and_cart {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 3fr 2fr;
+    column-gap: 0.8rem;
+    &__cta {
+      align-self: center;
+    }
+  }
+  &__product {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+
+    grid-template-columns: 1fr auto auto;
+    padding: 2.4rem 1.6rem;
+    margin: 0.8rem 0;
+    &__input {
+      width: 3.2rem;
+      margin: 0 0.8rem;
+    }
+  }
+
+  .bankslip {
+    &__total {
+      display: grid;
+      justify-content: end;
+      margin: 0.8rem 0;
+      text-align: end;
+      margin-left: auto;
+    }
+    .inline {
+      display: grid;
+      grid-auto-flow: column;
+      justify-content: start;
+      column-gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+
+    &__items {
+      .item {
+        padding: 0.8rem;
+
+        display: grid;
+        grid-auto-flow: column;
+        justify-items: start;
+
+        grid-template-columns: 4rem auto 7rem 6rem 6rem;
+
+        &--active {
+          @weakYellow: fade(@yellow, 80%);
+          background-color: lighten(@weakYellow, 38%);
+        }
+      }
+    }
+    row-gap: 0.8rem;
+  }
+}

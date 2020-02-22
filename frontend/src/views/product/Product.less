@@ -1,53 +1,50 @@
-@import '../../global/_colors.less';
+@import "../../global/_colors.less";
 
+.product {
+  margin: 1.6rem 20rem;
 
-.product { 
-    margin: 1.6rem 20rem;
-    
+  display: grid;
+  grid-auto-flow: row;
+
+  &__item {
+    width: 80%;
+    padding: 0.8rem 2.4rem;
+
     display: grid;
-    grid-auto-flow: row;
-    
+    grid-auto-flow: column;
 
-    &__item {
-        width: 80%;
-        padding: .8rem 2.4rem;
-
-        display: grid;
-        grid-auto-flow: column;
-
-        grid-template-columns: 50% 20% 20% 10%;
-        justify-content: space-between;
-        align-items: center;
-        margin: 1rem auto;
-        &__select { 
-            width: 8rem;
-        }
-
-        &__links {
-            display: grid;
-            grid-auto-flow: column;
-
-            &--delete {
-                color: @lust;
-            }
-            &--edit {
-                color: @bleuDeFrance;
-            }
-        }
+    grid-template-columns: 50% 20% 20% 10%;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem auto;
+    &__select {
+      width: 8rem;
     }
 
-    &__search {
-        width: 80%;
-        margin: auto !important;
-    }
+    &__links {
+      display: grid;
+      grid-auto-flow: column;
 
-    &__divider { 
-        margin-bottom: 1.6rem !important;
+      &--delete {
+        color: @lust;
+      }
+      &--edit {
+        color: @bleuDeFrance;
+      }
     }
+  }
 
-    &__container {
-        display: grid;
-        justify-content: center;
-    }
+  &__search {
+    width: 80%;
+    margin: auto !important;
+  }
+
+  hr {
+    margin-bottom: 1.6rem !important;
+  }
+
+  &__container {
+    display: grid;
+    justify-content: center;
+  }
 }
-

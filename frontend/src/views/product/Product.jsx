@@ -186,7 +186,7 @@ class Product extends Component {
     return (
       <main className="product content-container">
         <Typography variant="h4">Lista de Produtos</Typography>
-        <Divider classes={{ root: "product__divider" }} />
+        <Divider />
         <FormControl
           className="product__search"
           classes={{ root: "product__search" }}
