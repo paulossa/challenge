@@ -10,22 +10,24 @@ class StoreStore {
   constructor() {
     this.products = [];
     this.bankslip = [];
+    this.bankslipTotal = 0;
     this.promotions = {};
     this.bindActions(StoreActions);
   }
 
   getProducts(products) {
-    this.products = products.map(normalizeValue);
+    this.products = products;
   }
 
-  checkout(bankslip) {
-    this.bankslip = bankslip.map(normalizeValue);
+  checkout({bankslip, bankslip_total}) {
+    this.bankslip = bankslip;
+    this.bankslipTotal = bankslip_total;
   }
 
   getPromotions(promotions) {
     let temp_prom = {};
     for (const promotion of promotions) {
-      temp_prom[promotion.id] = `${promotion.type} - ${promotion.description}`;
+      temp_prom[promotion.id] = `${promotion.description}`;
     }
     this.promotions = temp_prom;
   }
