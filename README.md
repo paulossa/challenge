@@ -1,5 +1,8 @@
 # Coding Challenge
 
+![Basic use case](https://user-images.githubusercontent.com/23508287/94240167-46fc5b00-fee9-11ea-85de-5df653d36eb8.gif)
+
+
 ### Motivação
 
 Um protótipo para a funcionalidade de Promoções que futuramente será incorporada na solução da empresa.
