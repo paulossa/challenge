@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import connectToStores from "alt-utils/lib/connectToStores";
-import classnames from "classnames";
 
 import alt from "../../alt";
 
@@ -11,11 +10,15 @@ import {
   IconButton,
   Input,
   Button,
-  Tooltip
+  Tooltip,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@material-ui/core";
 
 import InfoIcon from "@material-ui/icons/InfoRounded";
-import ReceiptIcon from "@material-ui/icons/ReceiptRounded";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCartRounded";
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCartRounded";
 
@@ -28,7 +31,7 @@ import "./Store.css";
 class StoreView extends Component {
   state = {
     cart: [],
-    quantities: {}
+    quantities: {},
   };
 
   static getPropsFromStores() {
@@ -75,23 +78,23 @@ class StoreView extends Component {
       const qty = quantities[item.id];
       payload.push({
         id_product: item.id,
-        quantity: Math.max(qty, -qty)
+        quantity: Math.max(qty, -qty),
       });
     }
     await StoreActions.checkout(payload);
   };
 
-  handleQuantityChange = productId => ({ target: { value } }) => {
+  handleQuantityChange = (productId) => ({ target: { value } }) => {
     this.setState({
-      quantities: { ...this.state.quantities, [productId]: value }
+      quantities: { ...this.state.quantities, [productId]: value },
     });
   };
 
-  handleAddToCart = productId => () => {
+  handleAddToCart = (productId) => () => {
     const { quantities, cart } = this.state;
 
     if (Object.keys(quantities).includes(`${productId}`)) {
-      let product = this.props.products.find(p => p.id === productId);
+      let product = this.props.products.find((p) => p.id === productId);
       this.setState({ cart: [...cart, product] }, () => {
         StoreActions.removeFromProducts(product);
       });
@@ -100,7 +103,7 @@ class StoreView extends Component {
     }
   };
 
-  handleRemoveFromCart = productId => () => {
+  handleRemoveFromCart = (productId) => () => {
     const { quantities, cart } = this.state;
     let new_quantities = {};
     for (const k of Object.keys(quantities)) {
@@ -109,12 +112,12 @@ class StoreView extends Component {
       }
     }
 
-    const product = cart.find(el => el.id === productId);
+    const product = cart.find((el) => el.id === productId);
 
     this.setState(
       {
         quantities: new_quantities,
-        cart: cart.filter(({ id }) => id !== productId)
+        cart: cart.filter(({ id }) => id !== productId),
       },
       () => {
         StoreActions.addToProducts(product);
@@ -124,149 +127,125 @@ class StoreView extends Component {
 
   renderProducts = () => {
     const { products, promotions } = this.props;
-    return products.map(
-      ({ id: productId, name, description, value, id_promotion }) => {
-        return (
-          <Paper className="store__product" key={`p_${productId}`}>
-            <section className="product-info">
-              <section>
-                {id_promotion && (
-                  <Tooltip
-                    title={promotions[id_promotion]}
-                    placement="top"
-                    arrow
-                  >
-                    <InfoIcon className="store__icon--info" />
-                  </Tooltip>
-                )}
-                <Typography variant="title">{name}</Typography>
-                <Typography variant="body1">{description}</Typography>
-              </section>
-            </section>
-            <section>{formatCurrency(value)}</section>
-            <section>
-              <Input
-                type="number"
-                inputProps={{ min: "1" }}
-                placeholder="Qtde"
-                className="store__product__input"
-                name="quantity"
-                onChange={this.handleQuantityChange(productId)}
-              />
-              <IconButton onClick={this.handleAddToCart(productId)}>
-                <AddShoppingCartIcon />
-              </IconButton>
-            </section>
-          </Paper>
-        );
-      }
-    );
+    return products.map(({ id: productId, name, value, id_sale }) => {
+      return (
+        <Paper className="store__product" key={`p_${productId}`}>
+          <section className="info">
+            {id_sale && (
+              <Tooltip
+                title={
+                  <Typography color="inherit">
+                    Promoção: {promotions[id_sale]}
+                  </Typography>
+                }
+                placement="top"
+                arrow
+              >
+                <InfoIcon className="store__icon--info" />
+              </Tooltip>
+            )}
+            <Typography variant="title">{name}</Typography>
+          </section>
+          <section>{formatCurrency(value)}</section>
+          <section>
+            <Input
+              type="number"
+              inputProps={{ min: "1" }}
+              placeholder="Qtde"
+              className="store__product__input"
+              name="quantity"
+              onChange={this.handleQuantityChange(productId)}
+            />
+            <IconButton onClick={this.handleAddToCart(productId)}>
+              <AddShoppingCartIcon />
+            </IconButton>
+          </section>
+        </Paper>
+      );
+    });
   };
 
   renderCart = () => {
     const { promotions } = this.props;
     const { quantities, cart } = this.state;
 
-    return cart.map(
-      ({ id: productId, name, description, value, id_promotion }) => {
-        return (
-          <Paper className="store__product" key={`cp_${productId}`}>
-            <section className="product-info">
-              <section>
-                {id_promotion && (
-                  <Tooltip
-                    title={promotions[id_promotion]}
-                    placement="top"
-                    arrow
-                  >
-                    <InfoIcon className="store__icon--info" />
-                  </Tooltip>
-                )}
-                <Typography variant="title">{name}</Typography>
-                <Typography variant="body1">{description}</Typography>
-              </section>
-            </section>
-            <section>{formatCurrency(value)}</section>
-            <section>
-              <Input
-                type="number"
-                inputProps={{ min: "1" }}
-                value={quantities[productId]}
-                placeholder="Qtde"
-                className="store__product__input"
-                onChange={this.handleQuantityChange(productId)}
-              />
-              <IconButton onClick={this.handleRemoveFromCart(productId)}>
-                <RemoveShoppingCartIcon />
-              </IconButton>
-            </section>
-          </Paper>
-        );
-      }
-    );
-  };
-
-  renderBankslip = () => {
-    const { bankslip } = this.props;
-    let header = (
-      <Paper className="item" key={`bs_header`}>
-        <section>
-          <Typography variant="button">Código</Typography>
-        </section>
-        <section>
-          <Typography variant="button">Nome</Typography>
-        </section>
-        <section>
-          <Typography variant="button">Quantidade</Typography>
-        </section>
-        <section>
-          <Typography variant="button">Valor</Typography>
-        </section>
-        <section>
-          <Typography variant="button">Promoção</Typography>
-        </section>
-      </Paper>
-    );
-    let items = bankslip.map(bsItem => {
+    return cart.map(({ id: productId, name, description, value, id_sale }) => {
       return (
-        <Paper
-          className={classnames("item", {
-            "item--active": Boolean(bsItem.promotion)
-          })}
-          key={`bs_${bsItem.id}`}
-          elevation={0}
-        >
-          <section>{bsItem.code}</section>
-          <section>{bsItem.name}</section>
-          <section>{bsItem.quantity}</section>
-          <section>{formatCurrency(bsItem.value)}</section>
-          <section>{bsItem.promotion || "-"}</section>
+        <Paper className="store__product" key={`cp_${productId}`}>
+          <section className="product-info">
+            <section className="info">
+              {id_sale && (
+                <Tooltip
+                  title={
+                    <Typography color="inherit">
+                      Promoção: {promotions[id_sale]}
+                    </Typography>
+                  }
+                  placement="top"
+                  arrow
+                >
+                  <InfoIcon className="store__icon--info" />
+                </Tooltip>
+              )}
+              <Typography variant="title">{name}</Typography>
+            </section>
+          </section>
+          <section>{formatCurrency(value)}</section>
+          <section>
+            <Input
+              type="number"
+              inputProps={{ min: "1" }}
+              value={quantities[productId]}
+              placeholder="Qtde"
+              className="store__product__input"
+              onChange={this.handleQuantityChange(productId)}
+            />
+            <IconButton onClick={this.handleRemoveFromCart(productId)}>
+              <RemoveShoppingCartIcon />
+            </IconButton>
+          </section>
         </Paper>
       );
     });
+  };
 
-    if (items.length > 0) {
-      let bankslipTotal = bankslip.reduce(
-        (total, curEl) => total + curEl.value,
-        0
-      );
-      return (
-        <section className="bankslip">
-          <section className="inline">
-            <ReceiptIcon />
-            <Typography variant="title">Descrição da Compra</Typography>
-          </section>
-          <section className="bankslip__items">{[header, ...items]}</section>
-          <section className="bankslip__total">
-            <Typography variant="button">Total</Typography>
+  renderBankslip = () => {
+    const { bankslip, bankslipTotal } = this.props;
 
-            {formatCurrency(bankslipTotal)}
-          </section>
-        </section>
-      );
-    }
+    if (bankslip.length === 0) return;
 
-    return null;
+    return (
+      <Paper>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Item</TableCell>
+              <TableCell>Quantidade</TableCell>
+              <TableCell>Preço</TableCell>
+              <TableCell>Promoção</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {bankslip.map((bsItem) => (
+              <TableRow>
+                <TableCell>{bsItem.product}</TableCell>
+                <TableCell>{bsItem.quantity}</TableCell>
+                <TableCell>{formatCurrency(bsItem.value)}</TableCell>
+                <TableCell>{bsItem.sale || "-"}</TableCell>
+              </TableRow>
+            ))}
+            <TableRow>
+              <TableCell />
+              <TableCell>
+                <Typography variant="button">Total: </Typography>
+              </TableCell>
+              <TableCell>{formatCurrency(bankslipTotal)}</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Paper>
+    );
   };
 
   render() {

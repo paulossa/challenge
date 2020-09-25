@@ -5,7 +5,7 @@ class NewActions {
   getProducts() {
     return async dispatch => {
       try {
-        const { data } = await api.get("/produto");
+        const { data } = await api.get('/products');
         dispatch(data);
       } catch (err) {
         throw err;
@@ -16,7 +16,7 @@ class NewActions {
   editProduct(product) {
     return async dispatch => {
       try {
-        await api.put(`/produto/${product.id}`, product)
+        await api.put(`/products/${product.id}`, product)
         dispatch(product);
       } catch (err) {
         throw err;
@@ -27,7 +27,7 @@ class NewActions {
   deleteProduct(productId) {
     return async dispatch => {
       try {
-        await api.delete(`/produto/${productId}`);
+        await api.delete(`/products/${productId}`);
         dispatch(productId);
       } catch (err) {
         throw err;

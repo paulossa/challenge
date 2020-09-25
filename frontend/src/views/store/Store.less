@@ -23,6 +23,13 @@
       width: 3.2rem;
       margin: 0 0.8rem;
     }
+
+    .info {
+      display: grid;
+      justify-content: start;
+      column-gap: .8rem;
+      grid-auto-flow: column;
+    }
   }
 
   .bankslip {
@@ -58,5 +65,9 @@
       }
     }
     row-gap: 0.8rem;
+  }
+
+  &__icon--info {
+    color: @bleuDeFrance;
   }
 }

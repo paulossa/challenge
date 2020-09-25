@@ -3,9 +3,9 @@ import api from "../../global/api";
 
 class StoreActions {
   getProducts() {
-    return async dispatch => {
+    return async (dispatch) => {
       try {
-        const { data } = await api.get("/produto");
+        const { data } = await api.get("/products");
         dispatch(data);
       } catch (err) {
         throw err;
@@ -14,9 +14,11 @@ class StoreActions {
   }
 
   checkout(cart) {
-    return async dispatch => {
+    return async (dispatch) => {
       try {
-        const { data } = await api.post("/carrinho", cart);
+        const { data } = await api.post("/cart/checkout", {products: cart}, {
+          headers: { "Content-Type": "application/json" },
+        });
         dispatch(data);
       } catch (error) {
         throw error;
@@ -25,9 +27,9 @@ class StoreActions {
   }
 
   getPromotions() {
-    return async dispatch => {
+    return async (dispatch) => {
       try {
-        const { data } = await api.get("/promocao");
+        const { data } = await api.get("/sales");
         dispatch(data);
       } catch (error) {
         throw error;
