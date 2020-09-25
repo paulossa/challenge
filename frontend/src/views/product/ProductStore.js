@@ -8,7 +8,7 @@ class ProductStore {
   }
 
   getProducts(products) {
-    const normalizeCurrency = p => ({ ...p, value: p.value / 100 });
+    const normalizeCurrency = p => ({ ...p, value: p.value });
     this.products = products.map(normalizeCurrency);
   }
 

@@ -1,12 +1,11 @@
 import React, { PureComponent } from "react";
-import connectToStores from "alt-utils/lib/connectToStores";
 import { AppBar, Toolbar } from "@material-ui/core";
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   Link,
-  Redirect
+  Redirect,
 } from "react-router-dom";
 
 import ROUTES_CONFIG from "./RoutesConfig";
@@ -19,14 +18,6 @@ import "./App.css";
 import Promotion from "./views/promotion/Promotion";
 
 class App extends PureComponent {
-  static getStores() {
-    return [];
-  }
-
-  static getPropsFromStores() {
-    return {};
-  }
-
   render() {
     return (
       <div className="app">
@@ -68,4 +59,4 @@ class App extends PureComponent {
   }
 }
 
-export default connectToStores(App);
+export default App;

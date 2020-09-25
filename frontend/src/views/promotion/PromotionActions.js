@@ -5,7 +5,7 @@ class PromotionActions {
   getPromotions() {
     return async dispatch => {
       try {
-        const { data } = await api.get("/promocao");
+        const { data } = await api.get("/sales");
         dispatch(data)
       } catch (error) {
         throw error;

@@ -17,7 +17,7 @@ import {
   Divider,
   Select,
   MenuItem,
-  IconButton
+  IconButton,
 } from "@material-ui/core";
 
 import PromotionActions from "../promotion/PromotionActions";
@@ -32,10 +32,8 @@ import alt from "../../alt";
 class Product extends Component {
   state = {
     loading: true,
-    query: ""
+    query: "",
   };
-
-  inputLabel = React.createRef();
 
   static getPropsFromStores() {
     return { ...ProductStore.getState(), ...PromotionStore.getState() };
@@ -56,85 +54,66 @@ class Product extends Component {
 
   getPromotions = async () => {
     this.setState({ loading: true });
-    try {
-      await PromotionActions.getPromotions();
-    } catch (err) {
-      alert("Houve um erro ao buscar as promoções");
-    }
-
+    PromotionActions.getPromotions().then(console.log(this.props)).catch(() =>
+      alert("Houve um erro ao buscar as promoções")
+    );
     this.setState({ loading: false });
   };
 
   getProducts = async () => {
     this.setState({ loading: true });
-    try {
-      await ProductActions.getProducts();
-    } catch (error) {
-      console.error(error);
-      let msg = "Houve um erro ao buscar produtos";
-      if (error.response && error.response.data.message) {
-        msg = error.response.data.message;
-      }
-      alert(msg);
-    }
-
+    await ProductActions.getProducts().catch(() =>
+      alert("Houve um erro ao buscar produtos")
+    );
     this.setState({ loading: false });
   };
 
-  goTo = productId => () => {
+  goTo = (productId) => () => {
     this.props.history.push(RoutesConfig.productsEdit(productId));
   };
 
-  handleDeleteButton = productId => async () => {
+  handleDeleteButton = (productId) => async () => {
     this.setState({ loading: true });
     let usr_answer = window.confirm("Deseja realmente deletar esse produto?");
-    try {
-      if (usr_answer) {
-        await ProductActions.deleteProduct(productId);
-      }
-    } catch (error) {
-      let msg = "Houve um erro ao deletar o produto";
-
-      if (error.response && error.response.data.message) {
-        msg = error.response.data.message;
-      }
-
-      alert(msg);
+    if (usr_answer) {
+      await ProductActions.deleteProduct(productId).catch((error) => {
+        let msg = "Houve um erro ao deletar o produto";
+        if (error.response && error.response.data.message) {
+          msg = error.response.data.message;
+        }
+        alert(msg);
+      });
     }
     this.setState({ loading: false });
   };
 
-  renderPromotionItems = productId =>
-    this.props.promotions.map(promotion => {
-      return (
-        <MenuItem value={promotion.id} key={`${productId}_${promotion.id}`}>
-          {promotion.type}
-        </MenuItem>
-      );
-    });
+  renderPromotionItem = (item) => (
+    <MenuItem value={item.id} key={`item_${item.id}`}>
+      {item.description}
+    </MenuItem>
+  );
 
   renderProduct = (product, idx) => {
+    const { promotions } = this.props;
+    console.log('p ', promotions)
     return (
       <Paper className="product__item" key={`pr_${idx}`}>
         <section>
-          <Typography variant="title">
-            <code title="Código do produto">{product.code} | </code>
-            {product.name}
-          </Typography>
-          <Typography variant="subtitle1">{product.description}</Typography>
+          <code title="Código do produto">Código: {product.code}</code>
+          <Typography variant="title">{product.name}</Typography>
         </section>
         <section>
           <FormControl className="product__item__select">
             <InputLabel>Promoção</InputLabel>
             <Select
-              value={product.id_promotion || ""}
+              value={product.id_sale || ""}
               className="product__item__select"
               inputProps={{ readOnly: true }}
             >
               <MenuItem value={""}>
                 <em>Nenhuma</em>
               </MenuItem>
-              {this.renderPromotionItems(product.id)}
+              {promotions.map(this.renderPromotionItem)}
             </Select>
           </FormControl>
         </section>
@@ -160,10 +139,10 @@ class Product extends Component {
     const { products } = this.props;
     const { query } = this.state;
 
-    const query_lower = query.toLocaleLowerCase();
-    const queryFilter = ({ name, code }) =>
+    const query_lower = query.toLowerCase();
+    const queryFilter = ({ name, identifier }) =>
       name.toLowerCase().includes(query_lower) ||
-      code.toLowerCase().includes(query_lower);
+      identifier.toLowerCase().includes(query_lower);
     const filteredProducts = products.filter(queryFilter);
     const products_exist = filteredProducts.length > 0;
 
@@ -180,9 +159,10 @@ class Product extends Component {
     );
   };
 
-  handleChange = evt => this.setState({ [evt.target.name]: evt.target.value });
+  handleChange = ({ target: { name, value } }) => this.setState({ [name]: value });
 
   render() {
+    const { query } = this.state;
     return (
       <main className="product content-container">
         <Typography variant="h4">Lista de Produtos</Typography>
@@ -195,7 +175,7 @@ class Product extends Component {
           <InputLabel htmlFor="query">Pesquisa (Nome ou código)</InputLabel>
           <OutlinedInput
             id="query"
-            value={this.state.query}
+            value={query}
             name="query"
             onChange={this.handleChange}
             startAdornment={<SearchIcon />}
