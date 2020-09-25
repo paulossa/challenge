@@ -18,6 +18,7 @@ import {
   Select,
   MenuItem,
   IconButton,
+  Button,
 } from "@material-ui/core";
 
 import PromotionActions from "../promotion/PromotionActions";
@@ -54,9 +55,9 @@ class Product extends Component {
 
   getPromotions = async () => {
     this.setState({ loading: true });
-    PromotionActions.getPromotions().then(console.log(this.props)).catch(() =>
-      alert("Houve um erro ao buscar as promoções")
-    );
+    PromotionActions.getPromotions()
+      .then(console.log(this.props))
+      .catch(() => alert("Houve um erro ao buscar as promoções"));
     this.setState({ loading: false });
   };
 
@@ -95,7 +96,7 @@ class Product extends Component {
 
   renderProduct = (product, idx) => {
     const { promotions } = this.props;
-    console.log('p ', promotions)
+    console.log("p ", promotions);
     return (
       <Paper className="product__item" key={`pr_${idx}`}>
         <section>
@@ -159,13 +160,17 @@ class Product extends Component {
     );
   };
 
-  handleChange = ({ target: { name, value } }) => this.setState({ [name]: value });
+  handleChange = ({ target: { name, value } }) =>
+    this.setState({ [name]: value });
 
   render() {
     const { query } = this.state;
     return (
       <main className="product content-container">
-        <Typography variant="h4">Lista de Produtos</Typography>
+        <section className="product__header">
+          <Typography variant="h4">Lista de Produtos</Typography>
+          <Button onClick={this.goTo("novo")} variant="contained">CRIAR NOVO</Button>
+        </section>
         <Divider />
         <FormControl
           className="product__search"
