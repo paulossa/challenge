@@ -3,11 +3,10 @@ import api from "../../global/api";
 
 class UpsertProductActions {
   getProduct(productId) {
-    return async dispatch => {
+    return async (dispatch) => {
       try {
-        const { data } = await api.get("/produto");
-        const product = data.find(el => el.id === +productId);
-        dispatch(product);
+        const { data } = await api.get(`/products/${productId}`);
+        dispatch(data);
       } catch (error) {
         throw error;
       }
@@ -15,40 +14,49 @@ class UpsertProductActions {
   }
 
   putProduct(product) {
-    return async dispatch => {
+    return async (dispatch) => {
       try {
-        await api.put(`/produto/${product.id}`, product); 
-        dispatch()
-      } catch (error) {
-        throw error
-      }
-    }
-  }
-
-  postProduct(product) { 
-    return async dispatch => {
-      try {
-        await api.post(`/produto`, product)
-        dispatch()
+        console.log('ppp ', product)
+        if (product.id_sale === "") {
+          delete product.id_sale;
+          console.log('rrerejoreijw')
+        }
+        await api.put(`/products/${product.id}`, product, {
+          headers: { "Content-Type": "application/json" },
+        });
+        dispatch();
       } catch (error) {
         throw error;
       }
-    }
+    };
   }
 
-
+  postProduct(product) {
+    return async (dispatch) => {
+      try {
+        await api.post(
+          `/products`, 
+          product, 
+          {
+            headers: { "Content-Type": "application/json" },
+          });
+        dispatch();
+      } catch (error) {
+        throw error;
+      }
+    };
+  }
 
   getPromotions() {
-    return async dispatch => {
+    return async (dispatch) => {
       try {
-        const { data } = await api.get("/promocao");
-        dispatch(data)
+        const { data } = await api.get("/sales");
+        dispatch(data);
       } catch (error) {
         throw error;
       }
     };
   }
 }
-
 
 export default alt.createActions(UpsertProductActions);

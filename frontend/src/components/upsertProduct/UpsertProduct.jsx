@@ -8,7 +8,7 @@ import {
   MenuItem,
   Select,
   TextField,
-  Button
+  Button,
 } from "@material-ui/core";
 
 import RoutesConfig from "../../RoutesConfig";
@@ -23,10 +23,9 @@ import "./UpsertProduct.css";
 export class UpsertProduct extends Component {
   state = {
     name: "",
-    description: "",
-    code: "",
+    identifier: "",
     value: "",
-    id_promotion: ""
+    id_sale: "",
   };
 
   static getPropsFromStores() {
@@ -46,60 +45,62 @@ export class UpsertProduct extends Component {
     alt.recycle(UpsertProductStore);
   }
 
-  getPromotions = async () => {
-    try {
-      await UpsertProductActions.getPromotions();
-    } catch (error) {
-      alert("Houve um erro ao buscar as promoções");
-    }
+  getPromotions = () => {
+    UpsertProductActions.getPromotions().catch(() =>
+      alert("Houve um erro ao buscar as promoções")
+    );
   };
 
-  getProduct = async () => {
+  getProduct = () => {
     const {
       match: {
-        params: { id }
-      }
+        params: { id },
+      },
     } = this.props;
 
-    try {
-      if (id) {
-        await UpsertProductActions.getProduct(id);
-        this.setState({ ...this.props.product });
-      }
-    } catch (error) {
-      this.props.history.push(RoutesConfig.products());
+    if (id) {
+      UpsertProductActions.getProduct(id)
+        .then(() => {
+          this.setState({ ...this.props.product });
+        })
+        .catch(() => {
+          alert(
+            `Ocorreu um erro ao buscar informações de produto com id = ${id}`
+          );
+          this.props.history.push(RoutesConfig.products());
+        });
     }
   };
 
-  renderPromotionItem = promotion => (
+  renderPromotionItem = (promotion) => (
     <MenuItem value={promotion.id} key={promotion.id}>
-      {promotion.type}
+      {promotion.description}
     </MenuItem>
   );
 
-  handleChange = evt => {
-    this.setState({ [evt.target.name]: evt.target.value });
+  handleChange = ({ target: { name, value } }) => {
+    this.setState({ [name]: value });
   };
 
-  handleSubmit = async evt => {
+  handleSubmit = (evt) => {
     evt.preventDefault();
-
-    try {
-      await UpsertProductActions.putProduct(this.state);
-      alert("Produto atualizado com sucesso");
-      this.props.history.push(RoutesConfig.products());
-    } catch (error) {
-      let msg = "Houve um erro ao criar produto";
-      if (error.response && error.response.data.message) {
-        msg = error.response.data.message;
-      }
-      alert(msg);
-    }
+    UpsertProductActions.putProduct(this.state)
+      .then(() => {
+        alert("Produto atualizado com sucesso");
+        this.props.history.push(RoutesConfig.products());
+      })
+      .catch((error) => {
+        let msg = "Houve um erro ao criar produto";
+        if (error.response && error.response.data.message) {
+          msg = error.response.data.message;
+        }
+        alert(msg);
+      });
   };
 
   render() {
     const { promotions } = this.props;
-    const { code, name, description, value, id_promotion } = this.state;
+    const { identifier, name, value, id_sale } = this.state;
 
     return (
       <section className="upsert-product content-container">
@@ -108,8 +109,8 @@ export class UpsertProduct extends Component {
         <form onSubmit={this.handleSubmit}>
           <TextField
             label="Código"
-            name="code"
-            value={code}
+            name="identifier"
+            value={identifier}
             onChange={this.handleChange}
             fullWidth
           />
@@ -120,18 +121,9 @@ export class UpsertProduct extends Component {
             onChange={this.handleChange}
             fullWidth
           />
-          <TextField
-            label="Descrição"
-            name="description"
-            rows={3}
-            value={description}
-            onChange={this.handleChange}
-            fullWidth
-            multiline
-          />
 
           <TextField
-            label="Valor (em centavos)"
+            label="Valor"
             name="value"
             value={value}
             onChange={this.handleChange}
@@ -141,8 +133,8 @@ export class UpsertProduct extends Component {
           <FormControl className="product__item__select">
             <InputLabel>Promoção</InputLabel>
             <Select
-              value={id_promotion || ""}
-              name="id_promotion"
+              value={id_sale || ""}
+              name="id_sale"
               onChange={this.handleChange}
             >
               <MenuItem value={""}>
