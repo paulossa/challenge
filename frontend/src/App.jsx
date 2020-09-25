@@ -43,6 +43,11 @@ class App extends PureComponent {
               component={UpsertProduct}
             />
             <Route
+              exact
+              path={ROUTES_CONFIG.productsNew()}
+              component={UpsertProduct}
+            />
+            <Route
               path={`${ROUTES_CONFIG.sales_promotion()}`}
               component={Promotion}
             />

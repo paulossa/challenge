@@ -16,7 +16,6 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Tab,
 } from "@material-ui/core";
 
 import InfoIcon from "@material-ui/icons/InfoRounded";
@@ -213,7 +212,7 @@ class StoreView extends Component {
   renderBankslip = () => {
     const { bankslip, bankslipTotal } = this.props;
 
-    if (bankslip.length == 0) return;
+    if (bankslip.length === 0) return;
 
     return (
       <Paper>

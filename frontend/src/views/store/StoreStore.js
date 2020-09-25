@@ -1,11 +1,6 @@
 import alt from "../../alt";
 import StoreActions from "./StoreActions";
 
-let normalizeValue = product => ({
-  ...product,
-  value: product.value / 100
-});
-
 class StoreStore {
   constructor() {
     this.products = [];
@@ -27,7 +22,7 @@ class StoreStore {
   getPromotions(promotions) {
     let temp_prom = {};
     for (const promotion of promotions) {
-      temp_prom[promotion.id] = `${promotion.description}`;
+      temp_prom[promotion.id] = promotion.description;
     }
     this.promotions = temp_prom;
   }

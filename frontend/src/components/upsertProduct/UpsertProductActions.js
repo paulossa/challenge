@@ -16,10 +16,8 @@ class UpsertProductActions {
   putProduct(product) {
     return async (dispatch) => {
       try {
-        console.log('ppp ', product)
         if (product.id_sale === "") {
           delete product.id_sale;
-          console.log('rrerejoreijw')
         }
         await api.put(`/products/${product.id}`, product, {
           headers: { "Content-Type": "application/json" },
@@ -34,6 +32,9 @@ class UpsertProductActions {
   postProduct(product) {
     return async (dispatch) => {
       try {
+        if (product.id_sale === "") {
+          delete product.id_sale;
+        }
         await api.post(
           `/products`, 
           product, 

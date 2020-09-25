@@ -2,7 +2,16 @@ import React, { Component } from "react";
 import connectToStores from "alt-utils/lib/connectToStores";
 import PromotionStore from "./PromotionStore";
 
-import { Typography, Divider, Paper } from "@material-ui/core";
+import {
+  Typography,
+  Divider,
+  Paper,
+  TableHead,
+  TableRow,
+  TableCell,
+  Table,
+  TableBody,
+} from "@material-ui/core";
 import PromotionActions from "./PromotionActions";
 
 import "./Promotion.css";
@@ -30,23 +39,28 @@ class Promotion extends Component {
   renderPromotions = () => {
     const { promotions } = this.props;
 
-    const header = (
-      <Paper className="promotion__item">
-        <Typography variant="button">Tipo</Typography>
-        <Typography variant="button">Descrição</Typography>
+    return (
+      <Paper>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <Typography variant="headline">Descrição</Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {promotions.map((item) => (
+              <TableRow>
+                <TableCell>
+                  {item.description}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </Paper>
     );
-
-    const items = promotions.map(({ type, description }) => {
-      return (
-        <Paper className="promotion__item">
-          <section>{type}</section>
-          <section>{description}</section>
-        </Paper>
-      );
-    });
-
-    return [header, ...items];
   };
 
   render() {

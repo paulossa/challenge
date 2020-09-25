@@ -58,7 +58,7 @@ export class UpsertProduct extends Component {
       },
     } = this.props;
 
-    if (id) {
+    if (id !== "novo") {
       UpsertProductActions.getProduct(id)
         .then(() => {
           this.setState({ ...this.props.product });
@@ -84,13 +84,22 @@ export class UpsertProduct extends Component {
 
   handleSubmit = (evt) => {
     evt.preventDefault();
-    UpsertProductActions.putProduct(this.state)
+    const {
+      match: {
+        params: { id },
+      },
+    } = this.props;
+    const isNew = id === "novo";
+    const actionMethod = isNew
+      ? UpsertProductActions.postProduct
+      : UpsertProductActions.putProduct;
+    actionMethod(this.state)
       .then(() => {
-        alert("Produto atualizado com sucesso");
+        alert(`Produto ${isNew ? "criado" : "atualizado"} com sucesso`);
         this.props.history.push(RoutesConfig.products());
       })
       .catch((error) => {
-        let msg = "Houve um erro ao criar produto";
+        let msg = `Houve um erro ao ${isNew ? "criar" : "atualizar"} produto`;
         if (error.response && error.response.data.message) {
           msg = error.response.data.message;
         }
@@ -99,12 +108,19 @@ export class UpsertProduct extends Component {
   };
 
   render() {
-    const { promotions } = this.props;
+    const {
+      promotions,
+      match: {
+        params: { id },
+      },
+    } = this.props;
     const { identifier, name, value, id_sale } = this.state;
 
     return (
       <section className="upsert-product content-container">
-        <Typography variant="h4">Editar Produto</Typography>
+        <Typography variant="h4">
+          {id !== "novo" ? "Editar" : "Criar"} Produto
+        </Typography>
         <Divider />
         <form onSubmit={this.handleSubmit}>
           <TextField
@@ -113,6 +129,7 @@ export class UpsertProduct extends Component {
             value={identifier}
             onChange={this.handleChange}
             fullWidth
+            required
           />
           <TextField
             label="Nome"
@@ -120,14 +137,18 @@ export class UpsertProduct extends Component {
             value={name}
             onChange={this.handleChange}
             fullWidth
+            required
           />
 
           <TextField
             label="Valor"
             name="value"
+            type="number"
+            inputProps={{ step: 0.01, min: 0 }}
             value={value}
             onChange={this.handleChange}
             fullWidth
+            required
           />
 
           <FormControl className="product__item__select">
